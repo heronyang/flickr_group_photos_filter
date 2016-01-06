@@ -78,7 +78,7 @@ def apiCall(url):
     return response
 
 def readGroupListFromFile():
-    with open('group_list.csv', 'rb') as csvfile:
+    with open('group_list_sub.csv', 'rb') as csvfile:
         groupList = csv.reader(csvfile, delimiter=',', quotechar='"')
         for row in groupList:
             GroupList.append((row[0], row[1]))
@@ -133,7 +133,8 @@ def loggerFlush():
     logger.handlers[0].flush()
 
 def init():
-    removePreviousFile()
+    pass
+    # removePreviousFile()
 
 if __name__ == '__main__':
     logging.debug('start grabbing data...')
