@@ -2,48 +2,53 @@
 
 import json
 import urllib2
-import os
+import os, gc
 
 import csv
+import logging
 
 from math import ceil
 from IPython.core.debugger import Tracer
 
+# TODO: memory
+
 OUTPUT_FILEPATH = "photos.csv"
-
-GroupList = []
-PhotosOfGroups = {}
-
+LOG_FILEPATH = "main.log"
 PER_PAGE_MAX = 500
 
-def getPhotosURLOfGroupBase(group_id, page, per_page):
+GroupList = []
 
-    api_url = "https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos"
-    api_key = "2a2944553ef6c7620d9b4cb932308dd2"
-    json_format = "json&nojsoncallback=1"
+logging.basicConfig(filename = LOG_FILEPATH, level = logging.DEBUG)
+logger = logging.getLogger()
+
+def getPhotosURLOfGroupBase(groupId, page, per_page):
+
+    apiUrl = "https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos"
+    apiKey = "2a2944553ef6c7620d9b4cb932308dd2"
+    jsonFormat = "json&nojsoncallback=1"
     extras = "license,owner_name,url_l"
 
-    url = api_url \
-    + "&api_key=" + api_key \
-    + "&group_id=" + group_id \
-    + "&format=" + json_format \
+    url = apiUrl \
+    + "&api_key=" + apiKey \
+    + "&group_id=" + groupId \
+    + "&format=" + jsonFormat \
     + "&per_page=" + str(per_page) \
     + "&page=" + str(page) \
     + "&extras=" + extras
 
-    print 'api url: ' + url
+    logging.info('api url: ' + url)
 
     return url
 
-def getPhotosURLOfGroupMinimal(group_id):
-    return getPhotosURLOfGroupBase(group_id, 1, 1)
+def getPhotosURLOfGroupMinimal(groupId):
+    return getPhotosURLOfGroupBase(groupId, 1, 1)
 
-def getPhotosURLOfGroupOnPage(group_id, page):
-    return getPhotosURLOfGroupBase(group_id, page, PER_PAGE_MAX)
+def getPhotosURLOfGroupOnPage(groupId, page):
+    return getPhotosURLOfGroupBase(groupId, page, PER_PAGE_MAX)
 
-def getMinPageOfGroupPhotos(group_id):
+def getMinPageOfGroupPhotos(groupId):
 
-    url = getPhotosURLOfGroupMinimal(group_id)
+    url = getPhotosURLOfGroupMinimal(groupId)
     groupPhotos = apiCall(url)
 
     total = int(groupPhotos['photos']['total'])
@@ -51,24 +56,22 @@ def getMinPageOfGroupPhotos(group_id):
     if (total % PER_PAGE_MAX) != 0:
         page_n += 1
 
-    print 'page_n=' + str(page_n) + " total=" + str(total)
+    logging.debug('page_n=' + str(page_n) + " total=" + str(total))
+    loggerFlush()
 
     return page_n
 
-def getPhotosOfGroup(group_id):
+def savePhotosOfGroup(groupId):
 
-    page_n = getMinPageOfGroupPhotos(group_id)
+    page_n = getMinPageOfGroupPhotos(groupId)
 
-    result = []
     for p in range(1, page_n+1):
-        print 'page ' + str(p)
-        url = getPhotosURLOfGroupOnPage(group_id, p)
+        url = getPhotosURLOfGroupOnPage(groupId, p)
         gp = apiCall(url)
-        result.extend(gp['photos']['photo'])
-
-    print len(result)
-
-    return result
+        photos = gp['photos']['photo']
+        savePhotos(photos, groupId)
+        logging.debug('page ' + str(p) + ' photos saved')
+        gc.collect()
 
 def apiCall(url):
     response = json.load(urllib2.urlopen(url))
@@ -91,15 +94,16 @@ def savePhoto(photo, groupId):
     if not isValidPhoto(photo):
         return
 
-    print 'save photo: ' + photo['title'] + ', license = ' + photo['license'] + ', owner_name' + photo['owner']
+    logging.debug('save photo: ' + photo['title'] + ', license = ' + photo['license'] + ', owner_name' + photo['owner'])
     to_write = [ groupId, photo['url_l'], photo['license'], photo['owner'] ]
-    print to_write
+    logging.debug(to_write)
+    loggerFlush()
 
     with open(OUTPUT_FILEPATH, 'a') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', quotechar='"')
         writer.writerow(to_write)
 
-def savePhotosOfGroup(groupPhotos, groupId):
+def savePhotos(groupPhotos, groupId):
 
     count = 0
     for photo in groupPhotos:
@@ -107,30 +111,32 @@ def savePhotosOfGroup(groupPhotos, groupId):
             savePhoto(photo, groupId)
             count += 1
 
-    print str(count) + ' photo(s) are saved'
+    logging.debug(str(count) + ' photo(s) are saved')
 
 def getPhotosOfAllGroups():
     readGroupListFromFile();
     for group in GroupList:
         groupId = group[1]
 
-        print 'Get photo of group: ' + group[0]
-        groupPhotos = getPhotosOfGroup(groupId)
-        print 'Done'
-
-        savePhotosOfGroup(groupPhotos, groupId)
+        logging.info('Get photo of group: ' + group[0])
+        groupPhotos = savePhotosOfGroup(groupId)
+        logging.info('Done')
 
 def removePreviousFile():
     try:
-        print 'remove previous output file at ' + OUTPUT_FILEPATH
+        logging.warning('remove previous output file at ' + OUTPUT_FILEPATH)
         os.remove(OUTPUT_FILEPATH)
     except OSError:
         pass
+
+def loggerFlush():
+    logger.handlers[0].flush()
 
 def init():
     removePreviousFile()
 
 if __name__ == '__main__':
+    logging.debug('start grabbing data...')
     init()
     getPhotosOfAllGroups()
 
