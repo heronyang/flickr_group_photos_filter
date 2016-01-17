@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import csv
+import sys
 import logging
 import json, httplib
 
@@ -8,8 +9,8 @@ import ConfigParser
 
 from IPython.core.debugger import Tracer
 
-INPUT_PHOTO_FILE = "photos.csv"
-INPUT_GROUP_FILE = "group_list.csv"
+INPUT_PHOTO_FILE = "photos_sub.csv"
+INPUT_GROUP_FILE = "group_list_sub.csv"
 CONFIG_FILE = "config.cfg"
 
 PARSE_APPLICATION_ID = ""
@@ -33,9 +34,11 @@ def readParseConfig():
 
     except ConfigParser.Error:
         print 'Config Parser Error'
+        sys.stdout.flush()
         exit()
 
     print PARSE_APPLICATION_ID, PARSE_REST_API_KEY
+    sys.stdout.flush()
 
 class Group:
 
@@ -113,6 +116,8 @@ def commitOnePhotoToParse(photo):
             })
     results = json.loads(connection.getresponse().read())
     print results
+    sys.stdout.flush()
+
     connection.close()
     return results['objectId']
 
@@ -138,6 +143,8 @@ def updateGroupPointer(photo, photoParseId):
         })
     result = json.loads(connection.getresponse().read())
     print result
+    sys.stdout.flush()
+
     connection.close()
 
 
@@ -160,6 +167,8 @@ def commitOneGroupToParse(group):
     results = json.loads(connection.getresponse().read())
     saveParseResult(group, results)
     print results
+    sys.stdout.flush()
+
     connection.close()
 
 def saveParseResult(group, results):
