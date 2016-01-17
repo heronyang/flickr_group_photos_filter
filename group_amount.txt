@@ -1,0 +1,44 @@
+8-15mm f/4L USM fisheye : 427
+16-35mm f/2.8L II USM : 484
+16-35mm f/4L IS USM : 142
+24-70mm f/2.8L II USM : 1700
+24-105mm f/4.0L IS USM : 16759
+70-200mm f/4.0L USM : 2000
+70-200mm f/4.0L IS USM : 524
+70-200mm f/2.8L USM : 1469
+70-200mm f/2.8L IS II USM : 2001
+70-300mm f/4-5.6L IS USM : 1296
+100-400mm f/4.5-5.6L IS USM : 1531
+14mm f/2.8L II USM : 752
+24mm f/1.4L II USM : 1616
+35mm f/1.4L USM : 2001
+50mm f/1.2L USM : 2001
+85mm f/1.2L II USM : 471
+135mm f/2.0L USM : 2001
+200mm f/2.0L IS USM : 26
+200mm f/2.8L II USM : 368
+300mm f/2.8L IS II USM : 425
+300mm f/4.0L IS USM : 956
+400mm f/2.8L IS II USM : 364
+400mm f/5.6L USM : 1449
+100mm f/2.8L Macro IS USM : 2001
+17mm f/4.0L Tilt-Shift : 200
+24mm f/3.5L II Tilt-Shift : 573
+EF-S 10-22mm f/3.5-4.5 USM : 2001
+EF 20-35mm f/3.5-4.5 USM : 40
+EF-S 17-85mm f/4-5.6 IS USM : 2001
+EF-S 18-55mm f/3.5-5.6 : 2001
+EF 28-105mm f/3.5-4.5 II USM : 1307
+EF 28-135mm f/3.5-5.6 IS USM : 696
+EF 28-200mm f/3.5-5.6 USM : 127
+EF 70-300mm f/4.5-5.6 DO IS USM : 199
+EF 75-300mm f/4-5.6 III (&USM) : 356
+EF 15mm f/2.8 Fisheye : 280
+EF 24mm f/2.8 : 2001
+EF 28mm f/1.8 USM : 1406
+EF 28mm f/2.8 : 646
+EF 35mm f/2 : 1501
+EF 50mm f/1.4 USM : 2001
+EF 50mm f/1.8 II : 2001
+EF 85mm f/1.8 USM : 2000
+EF 100mm f/2 USM : 30
